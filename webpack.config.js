@@ -1,4 +1,4 @@
-// const path = require("path");
+const path = require("path");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WebpackBar = require("webpackbar");
 
@@ -12,6 +12,11 @@ module.exports = {
         client: {
             progress: true,
         },
+    },
+    output: {
+        filename: '[name].bundle.js',
+        path: path.resolve(__dirname, 'dist'),
+        clean: true,// 清除dist文件
     },
     module: {
         rules: [
