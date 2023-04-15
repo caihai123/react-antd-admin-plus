@@ -1,12 +1,17 @@
 // const path = require("path");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const WebpackBar = require("webpackbar");
 
 module.exports = {
     entry: './src/main.js',
+    stats: "none",
     devServer: {
         port: 8080,
         open: false,// 是否自动打开浏览器
         hot: true,// 是否开启热更新
+        client: {
+            progress: true,
+        },
     },
     module: {
         rules: [
@@ -18,5 +23,6 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({ template: './public/index.html' }),
-    ],
+        new WebpackBar(),
+    ]
 };
