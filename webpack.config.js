@@ -24,6 +24,7 @@ module.exports = (env) => {
             },
         },
         output: {
+            publicPath:"/",
             filename: '[name].bundle.js',
             path: path.resolve(__dirname, 'dist'),
             clean: true,// 清除dist文件
