@@ -1,0 +1,38 @@
+module.exports = {
+  root: true,
+  env: {
+    node: true,
+  },
+  extends: ["react-app", "react-app/jest", "eslint:recommended"],
+  parserOptions: {
+    ecmaVersion: 2022,
+  },
+  plugins: ["prettier"],
+  rules: {
+    "prettier/prettier": "error",
+    eqeqeq: ["error", "always"], // 需要使用===和!==
+    "no-var": "error",
+    "no-new-object": "error",
+    "object-shorthand": "error",
+    // "prefer-object-spread": "error",
+    "prefer-destructuring": ["error", { object: true, array: false }],
+    "prefer-template": "error",
+    "prefer-const": "error",
+    "no-eval": "error",
+    "func-style": "error",
+    "no-loop-func": "error",
+    "prefer-rest-params": "error",
+    "no-new-func": "error",
+    "no-param-reassign": ["error", { props: false }],
+    "one-var": ["error", "never"],
+    "no-nested-ternary": "error",
+    "no-unneeded-ternary": "error",
+    "import/no-mutable-exports": "error",
+    "import/prefer-default-export": "error",
+    "import/first": "error",
+    "import/extensions": ["error", "never", { css: "always", svg: "always" }],
+    "import/no-duplicates": "error",
+    "no-console": process.env.NODE_ENV === "production" ? "error" : "warn",
+    "no-debugger": process.env.NODE_ENV === "production" ? "error" : "warn",
+  },
+};
