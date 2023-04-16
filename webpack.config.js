@@ -55,6 +55,7 @@ module.exports = (_, argv) => {
   return {
     mode,
     entry: "./src/index.js",
+    devtool: mode === "production" ? false : "eval",
     devServer,
     output: {
       publicPath: "/",
