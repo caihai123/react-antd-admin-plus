@@ -94,11 +94,15 @@ module.exports = (_, argv) => {
     },
     plugins: [
       // 设置环境变量
-      new webpack.DefinePlugin({
-        "process.env": env,
-      }),
+      new webpack.DefinePlugin({ "process.env": env }),
+
       new HtmlWebpackPlugin({ template: "./public/index.html" }),
+
+      // 执行eslint校验
       new ESLintPlugin(),
+
+      // 打印编译进度
+      new webpack.ProgressPlugin(),
     ],
   };
 };
