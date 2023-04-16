@@ -2,9 +2,12 @@ const path = require("path");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WebpackBar = require("webpackbar");
 const webpack = require("webpack");
+const child_process = require("child_process");
 
-module.exports = (env) => {
+module.exports = (env, argv) => {
+    const { mode } = argv;
     return {
+        mode,
         entry: './src/index.js',
         stats: "none",
         devServer: {
@@ -24,8 +27,8 @@ module.exports = (env) => {
             },
         },
         output: {
-            publicPath:"/",
-            filename: '[name].bundle.js',
+            publicPath: "/",
+            filename: '[name].[hash:8].js',
             path: path.resolve(__dirname, 'dist'),
             clean: true,// 清除dist文件
         },
@@ -60,10 +63,29 @@ module.exports = (env) => {
             extensions: ['.js', '.jsx', '.css'],
         },
         plugins: [
+            // 设置环境变量
             new webpack.DefinePlugin({
                 'process.env': {
+                    NODE_ENV: JSON.stringify(mode),
+
+                    // app TITLE
+                    REACT_APP_WEBSITE_NAME: JSON.stringify("React Or Antd"),
+
+                    // commitHash
+                    REACT_APP_Commit_Hash: JSON.stringify(child_process
+                        .execSync("git show -s --format=%H")
+                        .toString()
+                        .trim()),
+
+                    // 是否开启 mockapi
                     REACT_APP_MOCK: true,
-                    // NODE_ENV: "development"
+
+                    // 打包时间（启动时间）
+                    REACT_APP_Build_Date: JSON.stringify((() => {
+                        const nowDate = new Date();
+                        return `${`${nowDate.getFullYear()}-${nowDate.getMonth() + 1
+                            }-${nowDate.getDate()} ${nowDate.getHours()}:${nowDate.getMinutes()}:${nowDate.getSeconds()}`}`;
+                    })())
                 }
             }),
             new HtmlWebpackPlugin({ template: './public/index.html' }),
