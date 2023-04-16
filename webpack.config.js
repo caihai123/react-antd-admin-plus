@@ -2,9 +2,12 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
 const child_process = require("child_process");
+const ESLintPlugin = require("eslint-webpack-plugin");
 
 module.exports = (_, argv) => {
   const { mode } = argv;
+
+  process.env.NODE_ENV = mode; // .eslintrc.js中需要访问
 
   // 环境变量
   const env = {
@@ -95,6 +98,7 @@ module.exports = (_, argv) => {
         "process.env": env,
       }),
       new HtmlWebpackPlugin({ template: "./public/index.html" }),
+      new ESLintPlugin(),
     ],
   };
 };
