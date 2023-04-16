@@ -3,27 +3,56 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
 const child_process = require("child_process");
 
-module.exports = (env, argv) => {
+module.exports = (_, argv) => {
   const { mode } = argv;
+
+  // 环境变量
+  const env = {
+    NODE_ENV: JSON.stringify(mode),
+
+    // app TITLE
+    REACT_APP_WEBSITE_NAME: JSON.stringify("React Or Antd"),
+
+    // commitHash
+    REACT_APP_Commit_Hash: JSON.stringify(
+      child_process.execSync("git show -s --format=%H").toString().trim()
+    ),
+
+    // 是否开启 mockapi
+    REACT_APP_MOCK: true,
+
+    // 打包时间（启动时间）
+    REACT_APP_Build_Date: JSON.stringify(
+      (() => {
+        const nowDate = new Date();
+        return `${`${nowDate.getFullYear()}-${
+          nowDate.getMonth() + 1
+        }-${nowDate.getDate()} ${nowDate.getHours()}:${nowDate.getMinutes()}:${nowDate.getSeconds()}`}`;
+      })()
+    ),
+  };
+
+  const devServer = {
+    historyApiFallback: true,
+    port: 8080,
+    open: false, // 是否自动打开浏览器
+    hot: true, // 是否开启热更新
+    proxy: {
+      "/api": {
+        target: "https://test-portal.gshbzw.com",
+        ws: true,
+        changeOrigin: true,
+        // pathRewrite: {
+        //   "^/api": "",
+        // },
+      },
+    },
+  };
+
   return {
     mode,
     entry: "./src/index.js",
-    devServer: {
-      historyApiFallback: true,
-      port: 8080,
-      open: false, // 是否自动打开浏览器
-      hot: true, // 是否开启热更新
-      proxy: {
-        "/api": {
-          target: "https://test-portal.gshbzw.com",
-          ws: true,
-          changeOrigin: true,
-          // pathRewrite: {
-          //   "^/api": "",
-          // },
-        },
-      },
-    },
+    devServer,
     output: {
       publicPath: "/",
       filename: "[name].[hash:8].js",
@@ -63,30 +92,7 @@ module.exports = (env, argv) => {
     plugins: [
       // 设置环境变量
       new webpack.DefinePlugin({
-        "process.env": {
-          NODE_ENV: JSON.stringify(mode),
-
-          // app TITLE
-          REACT_APP_WEBSITE_NAME: JSON.stringify("React Or Antd"),
-
-          // commitHash
-          REACT_APP_Commit_Hash: JSON.stringify(
-            child_process.execSync("git show -s --format=%H").toString().trim()
-          ),
-
-          // 是否开启 mockapi
-          REACT_APP_MOCK: true,
-
-          // 打包时间（启动时间）
-          REACT_APP_Build_Date: JSON.stringify(
-            (() => {
-              const nowDate = new Date();
-              return `${`${nowDate.getFullYear()}-${
-                nowDate.getMonth() + 1
-              }-${nowDate.getDate()} ${nowDate.getHours()}:${nowDate.getMinutes()}:${nowDate.getSeconds()}`}`;
-            })()
-          ),
-        },
+        "process.env": env,
       }),
       new HtmlWebpackPlugin({ template: "./public/index.html" }),
     ],
