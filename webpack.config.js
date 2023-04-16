@@ -1,6 +1,5 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const WebpackBar = require("webpackbar");
 const webpack = require("webpack");
 const child_process = require("child_process");
 
@@ -9,7 +8,6 @@ module.exports = (env, argv) => {
   return {
     mode,
     entry: "./src/index.js",
-    stats: "none",
     devServer: {
       historyApiFallback: true,
       port: 8080,
@@ -91,7 +89,6 @@ module.exports = (env, argv) => {
         },
       }),
       new HtmlWebpackPlugin({ template: "./public/index.html" }),
-      new WebpackBar(),
     ],
   };
 };
