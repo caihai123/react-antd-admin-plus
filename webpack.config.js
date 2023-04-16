@@ -50,6 +50,12 @@ module.exports = (_, argv) => {
         // },
       },
     },
+    client: {
+      overlay: {
+        errors: true,
+        warnings: false,
+      },
+    },
   };
 
   return {
@@ -100,7 +106,9 @@ module.exports = (_, argv) => {
       new HtmlWebpackPlugin({ template: "./public/index.html" }),
 
       // 执行eslint校验
-      new ESLintPlugin(),
+      new ESLintPlugin({
+        emitWarning: true,
+      }),
 
       // 打印编译进度
       new webpack.ProgressPlugin(),
