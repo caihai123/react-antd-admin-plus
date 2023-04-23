@@ -3,11 +3,15 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
 const child_process = require("child_process");
 const ESLintPlugin = require("eslint-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = (_, argv) => {
   const { mode } = argv;
 
   process.env.NODE_ENV = mode; // .eslintrc.js中需要访问
+
+  const isEnvDevelopment = mode === "development";
+  const isEnvProduction = mode === "production";
 
   // 环境变量
   const env = {
@@ -61,11 +65,16 @@ module.exports = (_, argv) => {
   return {
     mode,
     entry: "./src/index.js",
-    devtool: mode === "production" ? false : "eval",
+    devtool: isEnvProduction ? false : "eval",
     devServer,
     output: {
       publicPath: "/",
-      filename: "[name].[hash:8].js",
+      filename: isEnvProduction
+        ? "static/js/[name].[contenthash:8].js"
+        : isEnvDevelopment && "static/js/bundle.js",
+      chunkFilename: isEnvProduction
+        ? "static/js/[name].[contenthash:8].chunk.js"
+        : isEnvDevelopment && "static/js/[name].chunk.js",
       path: path.resolve(__dirname, "dist"),
       clean: true, // 清除dist文件
     },
@@ -77,7 +86,10 @@ module.exports = (_, argv) => {
         },
         {
           test: /\.css$/i,
-          use: ["style-loader", "css-loader"],
+          use: [
+            isEnvProduction ? MiniCssExtractPlugin.loader : "style-loader",
+            "css-loader",
+          ],
         },
         {
           test: /\.(png|jpg|gif|svg)$/,
@@ -86,7 +98,7 @@ module.exports = (_, argv) => {
               loader: "url-loader",
               options: {
                 limit: 8192, // 8kb以下转base64
-                name: "images/[name].[hash:8].[ext]", // 文件名格式
+                name: "static/image/[name].[hash].[ext]", // 文件名格式
               },
             },
           ],
@@ -110,6 +122,12 @@ module.exports = (_, argv) => {
 
       // 打印编译进度
       new webpack.ProgressPlugin(),
+
+      // 将css提取到单独的文件中
+      new MiniCssExtractPlugin({
+        filename: "static/css/[name].[contenthash:8].css",
+        chunkFilename: "static/css/[name].[contenthash:8].chunk.css",
+      }),
     ],
   };
 };
