@@ -124,10 +124,11 @@ module.exports = (_, argv) => {
       new webpack.ProgressPlugin(),
 
       // 将css提取到单独的文件中
-      new MiniCssExtractPlugin({
-        filename: "static/css/[name].[contenthash:8].css",
-        chunkFilename: "static/css/[name].[contenthash:8].chunk.css",
-      }),
+      isEnvProduction &&
+        new MiniCssExtractPlugin({
+          filename: "static/css/[name].[contenthash:8].css",
+          chunkFilename: "static/css/[name].[contenthash:8].chunk.css",
+        }),
     ],
   };
 };
