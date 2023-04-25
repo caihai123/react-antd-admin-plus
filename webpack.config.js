@@ -4,6 +4,9 @@ const webpack = require("webpack");
 const child_process = require("child_process");
 const ESLintPlugin = require("eslint-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const dayjs = require("dayjs");
+
+const APPNAME = "React Or Antd";
 
 module.exports = (_, argv) => {
   const { mode } = argv;
@@ -18,7 +21,7 @@ module.exports = (_, argv) => {
     NODE_ENV: JSON.stringify(mode),
 
     // app TITLE
-    REACT_APP_WEBSITE_NAME: JSON.stringify("React Or Antd"),
+    REACT_APP_WEBSITE_NAME: JSON.stringify(APPNAME),
 
     // commitHash
     REACT_APP_Commit_Hash: JSON.stringify(
@@ -29,14 +32,7 @@ module.exports = (_, argv) => {
     REACT_APP_MOCK: true,
 
     // 打包时间（启动时间）
-    REACT_APP_Build_Date: JSON.stringify(
-      (() => {
-        const nowDate = new Date();
-        return `${`${nowDate.getFullYear()}-${
-          nowDate.getMonth() + 1
-        }-${nowDate.getDate()} ${nowDate.getHours()}:${nowDate.getMinutes()}:${nowDate.getSeconds()}`}`;
-      })()
-    ),
+    REACT_APP_Build_Date: JSON.stringify(dayjs().format("YYYY-MM-DD HH:mm:ss")),
   };
 
   const devServer = {
@@ -87,9 +83,10 @@ module.exports = (_, argv) => {
         {
           test: /\.css$/i,
           use: [
-            isEnvProduction ? MiniCssExtractPlugin.loader : "style-loader",
+            isEnvProduction && MiniCssExtractPlugin.loader,
+            isEnvDevelopment && "style-loader",
             "css-loader",
-          ],
+          ].filter(Boolean),
         },
         {
           test: /\.(png|jpg|gif|svg)$/,
@@ -129,6 +126,6 @@ module.exports = (_, argv) => {
           filename: "static/css/[name].[contenthash:8].css",
           chunkFilename: "static/css/[name].[contenthash:8].chunk.css",
         }),
-    ],
+    ].filter(Boolean),
   };
 };
